@@ -5,6 +5,15 @@ import os
 import dagger
 from dagger import dag, function, field, object_type
 
+@object_type
+class VisualizationConfig:
+# class defining the response format of step 1 of tool 3
+
+    chart_type: str = field(..., description="Type of chart to generate", default="line")
+    x_axis: str = field(..., description="Name of the x-axis column", default="date")
+    y_axis: str = field(..., description="Name of the y-axis column", default="value")
+    title: str = field(..., description="Title of the chart")
+
 
 @object_type
 class DataAnalyst:
@@ -13,17 +22,6 @@ class DataAnalyst:
     # TRANSACTION_DATA_FILE_PATH = 'Store_Sales_Price_Elasticity_Promotions_Data.parquet'
     TRANSACTION_DATA_FILE_PATH = 's3://testdaggerevals/Store_Sales_Price_Elasticity_Promotions_Data.parquet'
     #TRANSACTION_DATA_FILE_PATH = '/src/**/testdaggerevals/Store_Sales_Price_Elasticity_Promotions_Data.parquet'
-
-
-    @object_type
-    class VisualizationConfig:
-    # class defining the response format of step 1 of tool 3
-
-        chart_type: str = field(..., description="Type of chart to generate", default="line")
-        x_axis: str = field(..., description="Name of the x-axis column", default="date")
-        y_axis: str = field(..., description="Name of the y-axis column", default="value")
-        title: str = field(..., description="Title of the chart")
-
 
     # prompt template for step 2 of tool 1
     SQL_GENERATION_PROMPT = """
@@ -117,56 +115,56 @@ class DataAnalyst:
         return analysis if analysis else "No analysis could be generated"
     
 
-    # # code for step 1 of tool 3
-    # @function
-    # async def extract_chart_config(self, data: str, visualization_goal: str) -> dict:
-    #     """Generate chart visualization configuration
-    
-    #      Args:
-    #         data: String containing the data to visualize
-    #         visualization_goal: Description of what the visualization should show
+        # # code for step 1 of tool 3
+        # @function
+        # async def extract_chart_config(self, data: str, visualization_goal: str) -> dict:
+        #     """Generate chart visualization configuration
         
-    #     Returns:
-    #          Dictionary containing line chart configuration
-    #     """
-    #     formatted_prompt = self.CHART_CONFIGURATION_PROMPT.format(data=data,
-    #                                                      visualization_goal=visualization_goal)
-    
-    #     #with_visualization_config_output("json", "generated visualization config")
-
-    #     content = await (
-    #         dag
-    #         .llm()
-    #         .with_env(vis_env)
-    #         .with_prompt(formatted_prompt)
-    #         .last_reply()
-    #     )
-    #     response = client.beta.chat.completions.parse(
-    #         model=MODEL,
-    #        messages=[{"role": "user", "content": formatted_prompt}],
-    #        response_format=VisualizationConfig,
-    #     )
-    
-    #     try:
-    #         # Extract axis and title info from response
-    #         content = response.choices[0].message.content
+        #      Args:
+        #         data: String containing the data to visualize
+        #         visualization_goal: Description of what the visualization should show
             
-    #         # Return structured chart config
-    #         return {
-    #             "chart_type": content.chart_type,
-    #             "x_axis": content.x_axis,
-    #             "y_axis": content.y_axis,
-    #             "title": content.title,
-    #             "data": data
-    #         }
-    #     except Exception:
-    #         return {
-    #             "chart_type": "line", 
-    #             "x_axis": "date",
-    #             "y_axis": "value",
-    #             "title": visualization_goal,
-    #             "data": data
-    #         }
+        #     Returns:
+        #          Dictionary containing line chart configuration
+        #     """
+        #     formatted_prompt = self.CHART_CONFIGURATION_PROMPT.format(data=data,
+        #                                                      visualization_goal=visualization_goal)
+        
+        #     #with_visualization_config_output("json", "generated visualization config")
+
+        #     content = await (
+        #         dag
+        #         .llm()
+        #         .with_env(vis_env)
+        #         .with_prompt(formatted_prompt)
+        #         .last_reply()
+        #     )
+        #     response = client.beta.chat.completions.parse(
+        #         model=MODEL,
+        #        messages=[{"role": "user", "content": formatted_prompt}],
+        #        response_format=VisualizationConfig,
+        #     )
+        
+        #     try:
+        #         # Extract axis and title info from response
+        #         content = response.choices[0].message.content
+                
+        #         # Return structured chart config
+        #         return {
+        #             "chart_type": content.chart_type,
+        #             "x_axis": content.x_axis,
+        #             "y_axis": content.y_axis,
+        #             "title": content.title,
+        #             "data": data
+        #         }
+        #     except Exception:
+        #         return {
+        #             "chart_type": "line", 
+        #             "x_axis": "date",
+        #             "y_axis": "value",
+        #             "title": visualization_goal,
+        #             "data": data
+        #         }
         
     #     # code for step 2 of tool 3
     #     @function
