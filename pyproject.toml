@@ -1,0 +1,17 @@
+[project]
+name = "data-analyst"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "dagger-io",
+    "pandas>=2.2.3",
+    "pyarrow>=19.0.1",
+    "duckdb>=1.2.2",
+]
+
+[tool.uv.sources]
+dagger-io = { path = "sdk", editable = true }
+
+[build-system]
+requires = ["hatchling==1.25.0"]
+build-backend = "hatchling.build"
